@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"log"
 	"os"
@@ -24,4 +25,15 @@ func readCsv(filename string) [][]string {
 	}
 
 	return records
+}
+
+func readInput() []byte {
+	reader := bufio.NewReader(os.Stdin)
+	input, _, err := reader.ReadLine()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return input
 }

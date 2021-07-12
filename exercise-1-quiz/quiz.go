@@ -1,10 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
 )
 
 type Question struct {
@@ -16,47 +13,48 @@ type Quiz struct {
 	Questions []Question
 }
 
-type Answer struct {
-	question Question
-	isCorrect bool
-}
-
 func (quiz *Quiz) addQuestion(prompt string, answer string) *Quiz {
 	quiz.Questions = append(quiz.Questions, Question{prompt, answer})
 
 	return quiz
 }
 
-func (question *Question) answerQuestion() bool {
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Println(question.Prompt)
-
-	input, _, err := reader.ReadLine()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return string(input) == question.Answer
+func readAnswer(answerChannel chan string) {
+	answerChannel <- string(readInput())
 }
 
-func (quiz *Quiz) startQuiz() (answers []*Answer) {
+func verifyAnswer(input string, answer string) bool {
+	return input == answer
+}
+
+func (quiz *Quiz) startQuiz(timeLimit int) {
+	answerChannel := make(chan string)
+	timer := startTimer(timeLimit)
+	correctAnswers := 0
+
+	quizLoop:
 	for _, question := range quiz.Questions {
-		answers = append(answers, &Answer{question, question.answerQuestion()})
-	}
+		fmt.Println(question.Prompt)
+		go readAnswer(answerChannel)
 
-	return answers
-}
+		select{
+			case answer := <- answerChannel:
+				if verifyAnswer(answer, question.Answer) {
+					correctAnswers++
+				}
+				break
 
-func printScore(answers []*Answer) {
-	score := 0
-	for _, answer := range answers {
-		if answer.isCorrect {
-			score++
+			case <- timer.C:
+				break quizLoop
 		}
 	}
 
-	fmt.Printf("You scored %d/%d!\n", score, len(answers))
+
+	printScore(correctAnswers, len(quiz.Questions))
+}
+
+func printScore(correctAnswers int, totalQuestions int) {
+	fmt.Printf("You scored %d out of %d!\n", correctAnswers, totalQuestions)
 }
 
 func createQuizFromCsv(filename string) *Quiz{
