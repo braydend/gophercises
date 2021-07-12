@@ -5,5 +5,7 @@ import (
 )
 
 func main() {
-	fmt.Println(readCsv(getCsvReader("addition.csv")))
+	quiz := parseQuiz("addition.csv")
+
+	fmt.Print(quiz)
 }
