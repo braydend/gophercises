@@ -5,7 +5,8 @@ import (
 )
 
 func main() {
-	quiz := parseQuiz("addition.csv")
+	flags := setUpFlags()
+	quiz := parseQuiz(flags.filename)
 
 	fmt.Print(quiz)
 }
