@@ -2,7 +2,7 @@ package main
 
 func main() {
 	flags := setUpFlags()
-	quiz := parseQuiz(flags.filename)
+	quiz := createQuizFromCsv(flags.filename)
 	answers := quiz.startQuiz()
 	printScore(answers)
 }

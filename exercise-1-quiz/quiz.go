@@ -59,9 +59,8 @@ func printScore(answers []*Answer) {
 	fmt.Printf("You scored %d/%d!\n", score, len(answers))
 }
 
-func parseQuiz(filename string) *Quiz{
-	reader := getCsvReader(filename)
-	data := readCsv(reader)
+func createQuizFromCsv(filename string) *Quiz{
+	data := readCsv(filename)
 	quiz := &Quiz{}
 
 	for _, row := range data {
