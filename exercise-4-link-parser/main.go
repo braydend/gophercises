@@ -3,5 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("Hello world!")
+	links := GetLinksFromHtml(parseHtmlFile("example1.html"))
+
+	fmt.Println(links)
 }
