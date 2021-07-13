@@ -22,41 +22,48 @@ func main() {
 
 	// Build the YAMLHandler using the mapHandler as the
 	// fallback
-	yamlHandler, err := YAMLHandler(getPathsFromYaml(flags.yamlFile), mapHandler)
+	yamlHandler, err := YAMLHandler(readFile(flags.yamlFile), mapHandler)
+	if err != nil {
+		panic(err)
+	}
+	jsonHandler, err := JSONHandler(readFile(flags.jsonFile), yamlHandler)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Starting the server on :8080")
-	http.ListenAndServe(":8080", yamlHandler)
+	http.ListenAndServe(":8080", jsonHandler)
 }
 
 type Flags struct {
 	yamlFile string
+	jsonFile string
 }
 
 func setupFlags() Flags {
 	var yamlFile string
+	var jsonFile string
 	flag.StringVar(&yamlFile, "yaml", "default.yml", "Yaml file to read path/url pair from")
+	flag.StringVar(&jsonFile, "json", "", "Yaml file to read path/url pair from")
 
 	flag.Parse()
 
-	return Flags{yamlFile}
+	return Flags{yamlFile, jsonFile}
 }
 
-func getPathsFromYaml(filename string) []byte{
+func readFile(filename string) []byte{
 	file, err := os.Open(filename)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	yamlBytes, err := ioutil.ReadAll(file)
+	bytes, err := ioutil.ReadAll(file)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return yamlBytes
+	return bytes
 }
 
 func defaultMux() *http.ServeMux {
