@@ -1,5 +1,5 @@
 package main
 
 func main()  {
-	startServer()
+	startServer(parseStories(parseFile("gopher.json")))
 }
