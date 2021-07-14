@@ -28,7 +28,7 @@ func getLinkDataFromNode(node *html.Node) Link {
 
 	getTextForLink := func (n *html.Node) {
 		if n.Type == html.TextNode {
-			text = n.Data
+			text += n.Data
 		}
 	}
 
