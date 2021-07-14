@@ -2,6 +2,7 @@ package main
 
 import (
 	"golang.org/x/net/html"
+	"strings"
 )
 
 type Link struct {
@@ -39,5 +40,5 @@ func getLinkDataFromNode(node *html.Node) Link {
 
 	traverseHtmlTree(node, getTextForLink)
 
-	return Link{href, text}
+	return Link{href, strings.TrimSpace(text)}
 }
