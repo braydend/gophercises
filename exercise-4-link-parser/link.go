@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"golang.org/x/net/html"
 	"strings"
 )
@@ -8,6 +9,13 @@ import (
 type Link struct {
 	Href string
 	Text string
+}
+
+func printLinks(links []Link) {
+	fmt.Printf("Found %d link(s) in the document:\n", len(links))
+	for _, link := range links {
+		fmt.Printf("(%s) with the label: %s\n", link.Href, link.Text)
+	}
 }
 
 func GetLinksFromHtml(doc *html.Node) (links []Link) {
