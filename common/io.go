@@ -12,7 +12,7 @@ func readFile(file *os.File) []byte {
 	return data
 }
 
-func openFile(filename string) *os.File {
+func OpenFile(filename string) *os.File {
 	data, err := os.Open(filename)
 	handleError(err)
 
@@ -20,5 +20,5 @@ func openFile(filename string) *os.File {
 }
 
 func ParseFile(filename string) []byte {
-	return readFile(openFile(filename))
+	return readFile(OpenFile(filename))
 }
