@@ -1,7 +1,9 @@
 package deck
 
 import (
+	"math/rand"
 	"sort"
+	"time"
 )
 
 type Card struct {
@@ -30,4 +32,13 @@ func (deck Deck) Sort(fn SortFn){
 	sort.Slice(deck, func (i,j int) bool {
 		return fn(deck[i], deck[j])
 	})
+}
+
+func (deck Deck) Shuffle() Deck{
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(deck), func (i,j int) {
+		deck[i], deck[j] = deck [j], deck[i]
+	})
+
+	return deck
 }

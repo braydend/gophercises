@@ -1,6 +1,7 @@
 package deck
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -27,4 +28,21 @@ func TestNewDeckSort(t *testing.T) {
 			t.Errorf("Expected card to be Ace but got: %s", deck[i].value)
 		}
 	}
+}
+
+func assertShuffledDeck(t *testing.T, deckA, deckB Deck) {
+	if reflect.DeepEqual(deckA, deckB) {
+		t.Errorf("The deck was not shuffled.\n Original deck: %v\n Shuffled deck: %v", deckA, deckB)
+	}
+}
+
+func TestDeckShuffle(t *testing.T) {
+	unshuffledDeck := NewDeck()
+	shuffledDeckOne := NewDeck().Shuffle()
+	shuffledDeckTwo := NewDeck().Shuffle()
+	shuffledDeckThree := NewDeck().Shuffle()
+
+	assertShuffledDeck(t, unshuffledDeck, shuffledDeckOne)
+	assertShuffledDeck(t, shuffledDeckOne, shuffledDeckTwo)
+	assertShuffledDeck(t, shuffledDeckTwo, shuffledDeckThree)
 }
