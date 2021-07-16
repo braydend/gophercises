@@ -15,24 +15,24 @@ func TestNewDeck(t *testing.T) {
 
 func assertAcesFirst(t *testing.T, deck Deck) {
 	for i := 0; i < 4; i++ {
-		if deck[i].value != "A" {
-			t.Errorf("Expected card to be Ace but got: %s", deck[i].value)
+		if deck[i].Rank != Ace {
+			t.Errorf("Expected card to be Ace but got: %s", deck[i].Rank.String())
 		}
 	}
 }
 
 func assertThreesFirst(t *testing.T, deck Deck) {
 	for i := 0; i < 4; i++ {
-		if deck[i].value != "3" {
-			t.Errorf("Expected card to be 3 but got: %s", deck[i].value)
+		if deck[i].Rank != Three {
+			t.Errorf("Expected card to be 3 but got: %s", deck[i].Rank.String())
 		}
 	}
 }
 
 func threesFirstSort(cardA, cardB Card) bool {
-	valueMap := map[string]int{"3": 1, "4": 2, "5": 3, "6": 4, "7": 5, "8": 6, "9": 7, "10": 8, "J": 9, "Q": 10, "K": 11,"A": 12, "2": 13}
+	valueMap := map[Rank]int{Three: 1, Four: 2, Five: 3, Six: 4, Seven: 5, Eight: 6, Nine: 7, Ten: 8, Jack: 9, Queen: 10, King: 11, Ace: 12, Two: 13}
 
-	return valueMap[cardA.value] < valueMap[cardB.value]
+	return valueMap[cardA.Rank] < valueMap[cardB.Rank]
 }
 
 func TestDeckSort(t *testing.T) {
@@ -78,7 +78,7 @@ func TestDeckAddJokers(t *testing.T) {
 
 	jokerCount := 0
 	for _, card := range deck {
-		if card.value == "Joker" {
+		if card.Suit == Joker {
 			jokerCount++
 		}
 	}
@@ -88,17 +88,17 @@ func TestDeckAddJokers(t *testing.T) {
 	}
 }
 
-func TestDeckRemoveValue(t *testing.T) {
-	valuesToRemove := map[string]bool{"A": true, "Q": true, "3": true, "J": true}
+func TestDeckRemoveRank(t *testing.T) {
+	valuesToRemove := map[Rank]bool{Ace: true, Queen: true, Three: true, Jack: true}
 	deck := NewDeck()
 
 	for value, _ := range valuesToRemove {
-		deck = deck.RemoveValue(value)
+		deck = deck.RemoveRank(value)
 	}
 
 	for _, card := range deck {
-		if valuesToRemove[card.value] {
-			t.Errorf("Expected %s to be filtered out of deck", card.value)
+		if valuesToRemove[card.Rank] {
+			t.Errorf("Expected %s to be filtered out of deck", card.Rank.String())
 		}
 	}
 }
@@ -122,13 +122,39 @@ func TestNewMultipleDeck(t *testing.T) {
 
 			aceCount := 0
 			for _, card := range deck {
-				if card.value == "A" {
+				if card.Rank == Ace {
 					aceCount++
 				}
 			}
 
 			if aceCount != testcase.expectedAceCount {
 				t.Errorf("Expected %d Aces in the deck, found %d", testcase.expectedAceCount, aceCount)
+			}
+		})
+	}
+}
+
+func TestCard_String(t *testing.T) {
+	type fields struct {
+		Suit Suit
+		Rank Rank
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   string
+	}{
+		{"Prints card correctly", fields{Spade, Ace}, "Ace of Spades"},
+		{"Prints Joker correctly", fields{Joker, 0}, "Joker"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			card := Card{
+				Suit: tt.fields.Suit,
+				Rank: tt.fields.Rank,
+			}
+			if got := card.String(); got != tt.want {
+				t.Errorf("String() = %v, want %v", got, tt.want)
 			}
 		})
 	}

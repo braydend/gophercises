@@ -1,21 +1,51 @@
 package deck
 
 import (
+	"fmt"
 	"math/rand"
 	"sort"
 	"time"
 )
 
+//go:generate stringer -type=Suit,Rank -output=suit_rank_string.go
+type Suit uint8
+type Rank uint8
+
+const (
+	Spade Suit = iota
+	Diamond
+	Club
+	Heart
+	Joker
+)
+
+const (
+	_ Rank = iota
+	Ace
+	Two
+	Three
+	Four
+	Five
+	Six
+	Seven
+	Eight
+	Nine
+	Ten
+	Jack
+	Queen
+	King
+)
+
 type Card struct {
-	suit string
-	value string
+	Suit
+	Rank
 }
 
 type Deck []Card
 
 func NewDeck() (deck Deck){
-	suits := [4]string{"Spades", "Diamonds", "Clubs", "Hearts"}
-	values := [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+	suits := [4]Suit{Spade, Diamond, Club, Heart}
+	values := [13]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King}
 
 	for _, suit := range suits {
 		for _, value := range values {
@@ -37,9 +67,7 @@ func NewMultipleDeck(deckCount int) (deck Deck) {
 type SortFn = func (cardA, cardB Card) bool
 
 func DefaultSort(cardA, cardB Card) bool {
-	valueMap := map[string]int{"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13}
-
-	return valueMap[cardA.value] < valueMap[cardB.value]
+	return cardA.Rank < cardB.Rank
 }
 
 func (deck Deck) Sort(fn SortFn){
@@ -59,19 +87,27 @@ func (deck Deck) Shuffle() Deck{
 
 func (deck Deck) AddJokers(count int) Deck {
 	for i := 0; i < count; i++ {
-		deck = append(deck, Card{"", "Joker"})
+		deck = append(deck, Card{Joker, 0})
 	}
 
 	return deck
 }
 
-func (deck Deck) RemoveValue(value string) Deck{
+func (deck Deck) RemoveRank(value Rank) Deck{
 	var filteredDeck Deck
 	for _, card := range deck {
-		if card.value != value {
+		if card.Rank != value {
 			filteredDeck = append(filteredDeck, card)
 		}
 	}
 
 	return filteredDeck
+}
+
+func (card Card) String() string {
+	if card.Suit == Joker {
+		return "Joker"
+	}
+
+	return fmt.Sprintf("%s of %ss", card.Rank.String(), card.Suit.String())
 }
