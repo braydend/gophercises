@@ -43,7 +43,7 @@ type Card struct {
 
 type Deck []Card
 
-func NewDeck() (deck Deck){
+func NewDeck(options ...func(deck Deck) Deck) (deck Deck){
 	suits := [4]Suit{Spade, Diamond, Club, Heart}
 	values := [13]Rank{Ace, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King}
 
@@ -51,6 +51,10 @@ func NewDeck() (deck Deck){
 		for _, value := range values {
 			deck = append(deck, Card{suit, value})
 		}
+	}
+
+	for _, option := range options {
+		deck = option(deck)
 	}
 
 	return deck
@@ -64,16 +68,23 @@ func NewMultipleDeck(deckCount int) (deck Deck) {
 	return deck
 }
 
-type SortFn = func (cardA, cardB Card) bool
+type SortFn = func (deck Deck) func (i, j int) bool
 
 func DefaultSort(cardA, cardB Card) bool {
 	return cardA.Rank < cardB.Rank
 }
 
-func (deck Deck) Sort(fn SortFn){
-	sort.Slice(deck, func (i,j int) bool {
-		return fn(deck[i], deck[j])
-	})
+func Sort(deck Deck) Deck{
+	sort.Slice(deck, fn(deck))
+
+	return deck
+	//sort.Slice(deck, func (i,j int) bool {
+	//	return fn(deck[i], deck[j])
+	//})
+}
+
+func absoluteRank(card Card) int {
+	return int(card.Suit) * 13 + int(card.Rank)
 }
 
 func (deck Deck) Shuffle() Deck{
