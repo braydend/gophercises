@@ -46,3 +46,18 @@ func TestDeckShuffle(t *testing.T) {
 	assertShuffledDeck(t, shuffledDeckOne, shuffledDeckTwo)
 	assertShuffledDeck(t, shuffledDeckTwo, shuffledDeckThree)
 }
+
+func TestDeckAddJokers(t *testing.T) {
+	deck := NewDeck().AddJokers(2)
+
+	jokerCount := 0
+	for _, card := range deck {
+		if card.value == "Joker" {
+			jokerCount++
+		}
+	}
+
+	if jokerCount != 2 {
+		t.Errorf("Expected 2 Jokers, found %d", jokerCount)
+	}
+}

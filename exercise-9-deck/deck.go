@@ -42,3 +42,11 @@ func (deck Deck) Shuffle() Deck{
 
 	return deck
 }
+
+func (deck Deck) AddJokers(count int) Deck {
+	for i := 0; i < count; i++ {
+		deck = append(deck, Card{"", "Joker"})
+	}
+
+	return deck
+}
