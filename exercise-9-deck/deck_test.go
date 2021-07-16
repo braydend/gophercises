@@ -13,20 +13,46 @@ func TestNewDeck(t *testing.T) {
 	}
 }
 
-func TestNewDeckSort(t *testing.T) {
-	sortAcesFirst := func (cardA, cardB Card) bool {
-		valueMap := map[string]int{"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13}
-
-		return valueMap[cardA.value] < valueMap[cardB.value]
-	}
-
-	deck := NewDeck()
-	deck.Sort(sortAcesFirst)
-
+func assertAcesFirst(t *testing.T, deck Deck) {
 	for i := 0; i < 4; i++ {
 		if deck[i].value != "A" {
 			t.Errorf("Expected card to be Ace but got: %s", deck[i].value)
 		}
+	}
+}
+
+func assertThreesFirst(t *testing.T, deck Deck) {
+	for i := 0; i < 4; i++ {
+		if deck[i].value != "3" {
+			t.Errorf("Expected card to be 3 but got: %s", deck[i].value)
+		}
+	}
+}
+
+func threesFirstSort(cardA, cardB Card) bool {
+	valueMap := map[string]int{"3": 1, "4": 2, "5": 3, "6": 4, "7": 5, "8": 6, "9": 7, "10": 8, "J": 9, "Q": 10, "K": 11,"A": 12, "2": 13}
+
+	return valueMap[cardA.value] < valueMap[cardB.value]
+}
+
+func TestDeckSort(t *testing.T) {
+	type args struct {
+		sortFn SortFn
+	}
+	tests := []struct {
+		name string
+		deck Deck
+		args args
+		assertionFn func(t *testing.T, deck Deck)
+	}{
+		{"Sorts aces first using DefaultSort", NewDeck(), args{DefaultSort}, assertAcesFirst},
+		{"Sorts threes first using custom sort", NewDeck(), args{threesFirstSort}, assertThreesFirst},
+	}
+	for _, testcase := range tests {
+		t.Run(testcase.name, func(t *testing.T) {
+			testcase.deck.Sort(testcase.args.sortFn)
+			testcase.assertionFn(t, testcase.deck)
+		})
 	}
 }
 

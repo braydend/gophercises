@@ -36,6 +36,12 @@ func NewMultipleDeck(deckCount int) (deck Deck) {
 
 type SortFn = func (cardA, cardB Card) bool
 
+func DefaultSort(cardA, cardB Card) bool {
+	valueMap := map[string]int{"A": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "8": 8, "9": 9, "10": 10, "J": 11, "Q": 12, "K": 13}
+
+	return valueMap[cardA.value] < valueMap[cardB.value]
+}
+
 func (deck Deck) Sort(fn SortFn){
 	sort.Slice(deck, func (i,j int) bool {
 		return fn(deck[i], deck[j])
