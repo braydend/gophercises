@@ -50,3 +50,14 @@ func (deck Deck) AddJokers(count int) Deck {
 
 	return deck
 }
+
+func (deck Deck) RemoveValue(value string) Deck{
+	var filteredDeck Deck
+	for _, card := range deck {
+		if card.value != value {
+			filteredDeck = append(filteredDeck, card)
+		}
+	}
+
+	return filteredDeck
+}

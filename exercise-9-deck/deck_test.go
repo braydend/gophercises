@@ -61,3 +61,18 @@ func TestDeckAddJokers(t *testing.T) {
 		t.Errorf("Expected 2 Jokers, found %d", jokerCount)
 	}
 }
+
+func TestDeckRemoveValue(t *testing.T) {
+	valuesToRemove := map[string]bool{"A": true, "Q": true, "3": true, "J": true}
+	deck := NewDeck()
+
+	for value, _ := range valuesToRemove {
+		deck = deck.RemoveValue(value)
+	}
+
+	for _, card := range deck {
+		if valuesToRemove[card.value] {
+			t.Errorf("Expected %s to be filtered out of deck", card.value)
+		}
+	}
+}
