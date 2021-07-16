@@ -26,6 +26,14 @@ func NewDeck() (deck Deck){
 	return deck
 }
 
+func NewMultipleDeck(deckCount int) (deck Deck) {
+	for i := 0; i < deckCount; i++ {
+		deck = append(deck, NewDeck()...)
+	}
+
+	return deck
+}
+
 type SortFn = func (cardA, cardB Card) bool
 
 func (deck Deck) Sort(fn SortFn){

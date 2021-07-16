@@ -76,3 +76,34 @@ func TestDeckRemoveValue(t *testing.T) {
 		}
 	}
 }
+
+func TestNewMultipleDeck(t *testing.T) {
+	type args struct {
+		deckCount int
+	}
+	tests := []struct {
+		name             string
+		args             args
+		expectedAceCount int
+	}{
+		{"Generate a single deck", args{1}, 4},
+		{"Generate a two combined decks", args{2}, 8},
+		{"Generate 10 combined decks", args{10}, 40},
+	}
+	for _, testcase := range tests {
+		t.Run(testcase.name, func(t *testing.T) {
+			deck := NewMultipleDeck(testcase.args.deckCount)
+
+			aceCount := 0
+			for _, card := range deck {
+				if card.value == "A" {
+					aceCount++
+				}
+			}
+
+			if aceCount != testcase.expectedAceCount {
+				t.Errorf("Expected %d Aces in the deck, found %d", testcase.expectedAceCount, aceCount)
+			}
+		})
+	}
+}
