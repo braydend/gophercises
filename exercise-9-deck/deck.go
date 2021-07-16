@@ -1,17 +1,19 @@
 package deck
 
-import "sort"
+import (
+	"sort"
+)
 
 type Card struct {
 	suit string
 	value string
 }
 
-type Deck = []Card
+type Deck []Card
 
-func NewDeck(sortFn func(i, j int) bool) (deck Deck){
+func NewDeck() (deck Deck){
 	suits := [4]string{"Spades", "Diamonds", "Clubs", "Hearts"}
-	values := [13]string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+	values := [13]string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
 
 	for _, suit := range suits {
 		for _, value := range values {
@@ -19,9 +21,13 @@ func NewDeck(sortFn func(i, j int) bool) (deck Deck){
 		}
 	}
 
-	if sortFn != nil {
-		sort.Slice(deck, sortFn)
-	}
-
 	return deck
+}
+
+type SortFn = func (cardA, cardB Card) bool
+
+func (deck Deck) Sort(fn SortFn){
+	sort.Slice(deck, func (i,j int) bool {
+		return fn(deck[i], deck[j])
+	})
 }
